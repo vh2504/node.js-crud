@@ -5,5 +5,6 @@ module.exports = async function Connect() {
 
   mongoose
     .connect("mongodb://localhost:2718/employees")
-    .then(() => console.log("connect mongodb success"));
+    .then(() => console.log("** connect mongodb success"))
+    .catch((error) => console.log("** connect mongodb error: ", error.message));
 };

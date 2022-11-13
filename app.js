@@ -1,40 +1,13 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 const useWebRoute = require("./routes/web");
 const useApiRoute = require("./routes/api");
-const authMiddleware = require("./middlewares/AuthMiddleware");
-const jwt = require("jsonwebtoken");
 const connect = require("./database/connect");
-const { generateJWTToken } = require("./services/UserService");
-const dotenv = require("dotenv");
 
-console.log(path.parse("./app/controllers/HomeController.js"));
-// get config vars
-dotenv.config();
-
-var cron = require("node-cron");
-
-// cron.schedule("* * * * *", async () => {
-//   console.log("running a task every minute: ", Date());
-// });
-
-// cron.schedule("* * * * * *", () => {
-//   console.log("running a task every second: ", Date());
-// });
-
-// access config var
-// console.log("token", process.env.TOKEN_SECRET);
-
-// console.log(require("crypto").randomBytes(64).toString("hex")); // key for jwt
-
-// const employeeModel = require("./app/models/EmployeeModel");
 connect();
-
-// console.log(generateJWTToken({ username: "vh254" }));
-
 var app = express();
 
 // view engine setup
@@ -46,17 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-// app.use("/statics/", express.static(path.join(__dirname, "public")));
-
-// app-level middleware
-function check(req, res, next) {
-  console.log("user id: ", req.params.userId);
-  if (req.params.userId != 7) {
-    next("route");
-    return;
-  }
-  next();
-}
 
 useWebRoute(app);
 useApiRoute(app);
@@ -67,6 +29,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
@@ -83,5 +46,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-// start foo bar zoo baz
 module.exports = app;

@@ -7,6 +7,10 @@ exports.loginSchema = checkSchema({
   },
   password: {
     errorMessage: "Password is required",
-    isString: true
+    isString: true,
+    isLength: {
+      errorMessage: "Password should be at least 8 chars long",
+      options: { min: 8 },
+    },
   },
 });

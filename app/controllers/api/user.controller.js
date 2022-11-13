@@ -1,34 +1,18 @@
-const helper = require("../../../Helpers/helpers");
-const userModel = require("../../models/UserModel");
-const { body, validationResult } = require("express-validator");
-const { generateJWTToken } = require("../../../services/UserService");
+const helper = require("../../../helpers/helpers");
+const userModel = require("../../models/user.model");
+const { validationResult } = require("express-validator");
+const { generateJWTToken } = require("../../services/user.service");
 
 class UserController {
-  async index(req, res, next) {
-    // find each person with a last name matching 'Ghost'
-    // const query = userModel.findOne({ username: "vh254" });
-    // // selecting the `username` and `password` fields
-    // query.select("username password");
-    // // execute the query at a later time
-    // query.exec(function (err, user) {
-    //   if (err) return handleError(err);
-    //   // Prints
-    //   console.log("%s %s.", user.username, user.password);
-    //   console.log(user);
-    //   res.json(user);
-    // });
-    let users = await userModel.find();
+
+  async getListUser(req, res, next) {
+    const users = await userModel.find();
 
     return helper.sendResponse(res, users, 200, "successfull");
-    // userModel.find().then((users) => {
-    //   users.forEach((user) => {
-    //     console.log(user.id, user.username);
-    //   });
-    // });
-    // return helper.sendResponse(res, "ok", 200, "successfull");
+ 
   }
 
-  async create(req, res) {
+  async createUser(req, res) {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -39,15 +23,6 @@ class UserController {
     const password = req.body.password?.trim();
     const name = req.body.name?.trim();
     const age = req.body.age;
-
-    if (!userName || !password || !name || !age) {
-      return helper.sendResponse(
-        res,
-        "error",
-        400,
-        "Validate create user failed."
-      );
-    }
 
     const user = await userModel.find({username: userName});
     if (user.length > 0) {
@@ -65,9 +40,6 @@ class UserController {
       await u.validate();
       await userModel.create(u);
 
-      //   await userModel.create(u, function (err, user) {
-      //     console.log(err);
-      //   });
     } catch (error) {
       return helper.sendResponse(res, error.message, 400, "error");
     }
@@ -75,7 +47,7 @@ class UserController {
     return helper.sendResponse(res, "success", 200, "Create user success.");
   }
 
-  async update(req, res) {
+  async updateUser(req, res) {
     const userId = req.params.userId;
     const userName = req.body.username.trim();
     const password = req.body.password.trim();
@@ -83,7 +55,7 @@ class UserController {
     const age = req.body.age;
 
     try {
-      let user = await userModel.find({ _id: userId });
+      const user = await userModel.find({ _id: userId });
 
       if (Object.keys(user).length === 0) {
         return helper.sendResponse(res, "error", 400, "Cannot find user.");
@@ -93,17 +65,15 @@ class UserController {
       user.password = password || user.password;
       user.name = name || user.name;
       user.age = age || user.age;
-
       user.save();
 
       return helper.sendResponse(res, user, 200, "Update user success.");
     } catch (error) {
-      console.log(error);
       return helper.sendResponse(res, "error", 400, "Update user error.");
     }
   }
 
-  async delete(req, res) {
+  async deleteUser(req, res) {
     const userId = req.params.userId;
 
     try {

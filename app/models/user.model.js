@@ -16,13 +16,6 @@ const userSchema = new Schema(
     age: Number,
   },
   {
-    methods: {
-      createAccessToken() {
-        console.log(this.username, " : user name");
-      },
-    },
-  },
-  {
     versionKey: false, // You should be aware of the outcome after set to false
   }
 
@@ -30,11 +23,5 @@ const userSchema = new Schema(
 );
 
 const User = mongoose.model("User", userSchema);
-// let user = new User({
-//   username: "t",
-//   password: "111",
-//   name: "test",
-//   age: 1,
-// });
-// user.createAccessToken();
+
 module.exports = User;
